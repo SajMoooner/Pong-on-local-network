@@ -13,3 +13,8 @@ The step by step proces :
   - to comunicate and get data between 2 local computers we use socket 
   
   
+Server : 
+![image](https://user-images.githubusercontent.com/70257823/211001926-d186d537-e2b8-4d23-b72f-dd5f826ffc38.png)
+
+Client : 
+![image](https://user-images.githubusercontent.com/70257823/211001987-854f137b-d697-493a-a778-06239f59a781.png)
