@@ -86,17 +86,19 @@ int main() {
 
   // Zisti či je server alebo klient
   bool is_server = false;
-  std::cout << "Ak chceš byť server napíš s, ak chceš byť klient napíš IP adresu servera : ";
+  std::cout << "Ak chcec byt server napis s, ak chces byt klient napis IP adresu servera : ";
   std::string input;
   std::cin >> input;
  
  
   if (input == "s") {
+    std::cout << "Cakam na pripojenie klienta..." << std::endl;
     is_server = true;
   } else {
+    std::cout << "Pripajam sa na server..." << std::endl;
     partner_ip = input;
   }
- 
+  
   // Hlavný cyklus hry
   while (window.isOpen()) {
 
