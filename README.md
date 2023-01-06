@@ -13,3 +13,19 @@ The step by step proces :
   - to comunicate and get data between 2 local computers we use socket 
   
   
+Server : 
+
+
+![image](https://user-images.githubusercontent.com/70257823/211001926-d186d537-e2b8-4d23-b72f-dd5f826ffc38.png)
+
+Client : 
+
+
+![image](https://user-images.githubusercontent.com/70257823/211001987-854f137b-d697-493a-a778-06239f59a781.png)
+
+
+Reality : 
+- 2 computers connected on same network 
+
+![image](https://user-images.githubusercontent.com/70257823/211002506-3c3d7ae4-89b3-4cd8-95ba-b88d0f7d9b35.png)
+
