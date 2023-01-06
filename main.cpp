@@ -1,16 +1,27 @@
+/*
+  Project : Pong Game
+  Author :  SajMoooner a Marek
+  Predmet : POS
+  Stack : c++ , SFML, SFML-Network, SFML-graphics, SFML-system, SFML-window,
+
+*/
+
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
  
- 
+ // Konštanty pre hru
 unsigned short PORT = 12345;
 const int WIDTH = 800;
 const int HEIGHT = 600;
  
 int main() {
-  // Create the window and the paddles and score
+
+  // Vytvor hlavné okno hry 
   sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Pong");
+
+  // Vytvor hráčov 
   sf::RectangleShape player1(sf::Vector2f(10, 50));
   sf::RectangleShape player2(sf::Vector2f(10, 50));
   player1.setFillColor(sf::Color::White);
@@ -18,36 +29,39 @@ int main() {
   player1.setPosition(10, HEIGHT / 2 - 25);
   player2.setPosition(WIDTH - 20, HEIGHT / 2 - 25);
  
- 
-  // Create the ball
+  // Vytvor loptu
   sf::CircleShape ball(10);
   ball.setFillColor(sf::Color::White);
   ball.setPosition(WIDTH / 2, HEIGHT / 2);
   sf::Vector2f ball_velocity(1, 1);
  
-  // create the score
+  // Vytvor skore ktoré sa zobrazuje na obrazovke
   sf::Font font;
   font.loadFromFile("arial.ttf");
   sf::Text score1;
   sf::Text score2;
   score1.setFont(font);
   score2.setFont(font);
-    score1.setCharacterSize(24);
-    score2.setCharacterSize(24);
-    score1.setFillColor(sf::Color::White);
-    score2.setFillColor(sf::Color::White);
-    score1.setPosition(WIDTH / 2 - 50, 10);
-    score2.setPosition(WIDTH / 2 + 50, 10);
-    int score1N = 0;
-    int score2N = 0;
+  score1.setCharacterSize(24);
+  score2.setCharacterSize(24);
+  score1.setFillColor(sf::Color::White);
+  score2.setFillColor(sf::Color::White);
+  score1.setPosition(WIDTH / 2 - 50, 10);
+  score2.setPosition(WIDTH / 2 + 50, 10);
+  int score1N = 0;
+  int score2N = 0;
  
  
-  // Initialize the network sockets
+  // Vytvor socket pre komunikáciu medzi serverom a klientom a bindni ho na port 
   sf::UdpSocket socket;
   socket.bind(PORT);
+
+  // Vytvor IP adresu
   sf::IpAddress partner_ip;
+
+  // Zisti či je server alebo klient
   bool is_server = false;
-  std::cout << "Enter 's' to start a server, or enter the IP address of the server: ";
+  std::cout << "Ak chceš byť server napíš s, ak chceš byť klient napíš IP adresu servera : ";
   std::string input;
   std::cin >> input;
  
@@ -58,19 +72,22 @@ int main() {
     partner_ip = input;
   }
  
-  // Main game loop
+  // Hlavný cyklus hry
   while (window.isOpen()) {
-    // Handle events
+
+    // Event loop kym sa okno nezavrie
     sf::Event event;
+
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         window.close();
       }
     }
- 
-    // Update the paddles based on user input 
-    // w and s for player 1 server
-    // up and down for player 2 client
+
+    //Zisti polohu hráčov
+    //SERVER stlačenie kláves W a S
+    //CLIENT stlačenie kláves UP a DOWN
+
     if (is_server) {
       if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         player1.move(0, -1);
@@ -88,7 +105,8 @@ int main() {
     }
  
  
-    // Clamp the paddles to the screen
+    // Vykresli hráčov a loptu
+
     if (player1.getPosition().y < 0) {
       player1.setPosition(10, 0);
     }
@@ -102,22 +120,23 @@ int main() {
       player2.setPosition(WIDTH - 20, HEIGHT - 50);
     }
  
-    // Update the ball
+    // Updatni pozíciu lopty
     ball.move(ball_velocity);
     if (ball.getPosition().y < 0 || ball.getPosition().y > HEIGHT - 20) {
       ball_velocity.y *= -1;
     }
  
-    // Check for collisions with the paddles
+    // Zisti či bola lopta dotknutá hráčom 1
     if (ball.getGlobalBounds().intersects(player1.getGlobalBounds())) {
       ball_velocity.x *= -1;
     }
- 
+
+    // Zisti či bola lopta dotknutá hráčom 2
     if (ball.getGlobalBounds().intersects(player2.getGlobalBounds())) {
       ball_velocity.x *= -1;
     }
  
-    // Check for a goal
+    // Zisti či lopta skorovala
     if (ball.getPosition().x < 0) {
       ball.setPosition(WIDTH / 2, HEIGHT / 2);
         score2N++;
@@ -128,11 +147,14 @@ int main() {
         score1N++;
     }
  
-    // Update the score
+    // Updatni skore
     score1.setString(std::to_string(score1N));
     score2.setString(std::to_string(score2N));
  
-    // Send the paddle positions from server to client and vice versa
+    // Pošli pozíciu hráčov na server a klienta a updatni pozíciu hráčov na serveri a klientovi
+    // server posiela pozíciu hráča 1 a klientovy 
+    // klient posiela pozíciu hráča 2 a serveru
+
     sf::Packet packet;
     if (is_server) {
       packet << player1.getPosition().y;
@@ -142,8 +164,10 @@ int main() {
     socket.send(packet, partner_ip, PORT);
 
 
-    // Receive the paddle positions from client and update the paddle positions on the server
-    // and vice versa
+    // Prijmi pozíciu hráčov od servera a klienta a updatni pozíciu hráčov na serveri a klientovi
+    // server prijíma pozíciu klienta
+    // klient prijíma pozíciu servera
+    // nastav pozíciu hráčov na pozíciu prijatú od servera a klienta
     sf::Packet packet2;
     if (is_server) {
       socket.receive(packet2, partner_ip, PORT);
@@ -157,7 +181,8 @@ int main() {
       player1.setPosition(10, y);
     }
  
-    // Clear the window and draw the game objects
+    // Vykresli pozadie
+    // Vykresli skore, hráčov a loptu na okno
     window.clear();
    
     window.draw(score1);
