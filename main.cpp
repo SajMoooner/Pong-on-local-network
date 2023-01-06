@@ -10,11 +10,26 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <pthread.h>
  
  // Konštanty pre hru
 unsigned short PORT = 12345;
 const int WIDTH = 800;
 const int HEIGHT = 600;
+
+// Funkcia pre pridanie skore hracovi 1 pomocou vlakna
+void *addScorePlayer1(void *arg) {
+  int *score1N = (int *)arg;
+  *score1N += 1;
+  return NULL;
+}
+
+// Funkcia pre pridanie skore hracovi 2 pomocou vlakna
+void *addScorePlayer2(void *arg) {
+  int *score2N = (int *)arg;
+  *score2N += 1;
+  return NULL;
+}
  
 int main() {
 
@@ -50,7 +65,14 @@ int main() {
   score2.setPosition(WIDTH / 2 + 50, 10);
   int score1N = 0;
   int score2N = 0;
- 
+
+  // Vytvor vlákno pre pridanie skore hracovi 1
+  pthread_t thread1;
+  pthread_create(&thread1, NULL, addScorePlayer1, &score1N);
+
+  // Vytvor vlákno pre pridanie skore hracovi 2
+  pthread_t thread2;
+  pthread_create(&thread2, NULL, addScorePlayer2, &score2N);
  
   // Vytvor socket pre komunikáciu medzi serverom a klientom a bindni ho na port 
   sf::UdpSocket socket;
@@ -58,6 +80,9 @@ int main() {
 
   // Vytvor IP adresu
   sf::IpAddress partner_ip;
+
+  // Vypíš moju IP adresu 
+  std::cout << "Tvoja IP adresa je : " << sf::IpAddress::getLocalAddress() << std::endl;
 
   // Zisti či je server alebo klient
   bool is_server = false;
@@ -139,12 +164,12 @@ int main() {
     // Zisti či lopta skorovala
     if (ball.getPosition().x < 0) {
       ball.setPosition(WIDTH / 2, HEIGHT / 2);
-        score2N++;
+      score2N++;
     }
  
     if (ball.getPosition().x > WIDTH) {
       ball.setPosition(WIDTH / 2, HEIGHT / 2);
-        score1N++;
+      score1N++;
     }
  
     // Updatni skore
