@@ -22,3 +22,10 @@ Client :
 
 
 ![image](https://user-images.githubusercontent.com/70257823/211001987-854f137b-d697-493a-a778-06239f59a781.png)
+
+
+Reality : 
+- 2 computers connected on same network 
+
+![image](https://user-images.githubusercontent.com/70257823/211002506-3c3d7ae4-89b3-4cd8-95ba-b88d0f7d9b35.png)
+
