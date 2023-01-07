@@ -12,27 +12,34 @@
 #include <iostream>
 #include <thread>
 
-// Funkcia pre pridanie skore hracovi 1 pomocou vlakna
-void *addScorePlayer1(void *arg) {
-  int *score1N = (int *)arg;
+// function for thread which will add score to player 1 
+void addScore1(int *score1N) {
   *score1N += 1;
-  return NULL;
 }
 
-// Funkcia pre pridanie skore hracovi 2 pomocou vlakna
-void *addScorePlayer2(void *arg) {
-  int *score2N = (int *)arg;
+// function for thread which will add score to player 2
+void addScore2(int *score2N) {
   *score2N += 1;
-  return NULL;
 }
- 
+
+void drawGame( sf::RenderWindow *window, sf::RectangleShape *player1, sf::RectangleShape *player2, sf::CircleShape *ball, sf::Text *score1, sf::Text *score2) {
+  window->clear();
+  window->draw(*player1);
+  window->draw(*player2);
+  window->draw(*ball);
+  window->draw(*score1);
+  window->draw(*score2);
+  window->display();
+}
+
+
 int main() {
 
   // Konštanty pre hru
   unsigned short PORT = 12345;
   const int WIDTH = 800;
   const int HEIGHT = 600;
-  
+
   // Vytvor hlavné okno hry 
   sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Pong");
 
@@ -159,17 +166,22 @@ int main() {
     // Zisti či lopta skorovala
     if (ball.getPosition().x < 0) {
       ball.setPosition(WIDTH / 2, HEIGHT / 2);
-      score2N++;
-    }
+       std::thread t2 (addScore2, &score2N);
+       t2.join();
+       
+   }
  
     if (ball.getPosition().x > WIDTH) {
       ball.setPosition(WIDTH / 2, HEIGHT / 2);
-      score1N++;
+      std::thread t1 (addScore1, &score1N);
+      t1.join();
     }
- 
-    // Updatni skore
+
+    // Updatni skore 
     score1.setString(std::to_string(score1N));
     score2.setString(std::to_string(score2N));
+
+
  
     // Pošli pozíciu hráčov na server a klienta a updatni pozíciu hráčov na serveri a klientovi
     // server posiela pozíciu hráča 1 a klientovy 
@@ -201,18 +213,17 @@ int main() {
       player1.setPosition(10, y);
     }
  
-    // Vykresli pozadie
+    // Vykresli pozadie na okno pomocouv vlakna 
     // Vykresli skore, hráčov a loptu na okno
-    window.clear();
    
-    window.draw(score1);
-    window.draw(score2);
-
+    window.clear(sf::Color::Black);
     window.draw(player1);
     window.draw(player2);
     window.draw(ball);
-
+    window.draw(score1);
+    window.draw(score2);
     window.display();
+    
   }
     return 0;
    
