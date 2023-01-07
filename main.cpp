@@ -22,16 +22,6 @@ void addScore2(int *score2N) {
   *score2N += 1;
 }
 
-void drawGame( sf::RenderWindow *window, sf::RectangleShape *player1, sf::RectangleShape *player2, sf::CircleShape *ball, sf::Text *score1, sf::Text *score2) {
-  window->clear();
-  window->draw(*player1);
-  window->draw(*player2);
-  window->draw(*ball);
-  window->draw(*score1);
-  window->draw(*score2);
-  window->display();
-}
-
 
 int main() {
 
