@@ -10,12 +10,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
- 
- // Konštanty pre hru
-unsigned short PORT = 12345;
-const int WIDTH = 800;
-const int HEIGHT = 600;
+#include <thread>
 
 // Funkcia pre pridanie skore hracovi 1 pomocou vlakna
 void *addScorePlayer1(void *arg) {
@@ -33,6 +28,11 @@ void *addScorePlayer2(void *arg) {
  
 int main() {
 
+  // Konštanty pre hru
+  unsigned short PORT = 12345;
+  const int WIDTH = 800;
+  const int HEIGHT = 600;
+  
   // Vytvor hlavné okno hry 
   sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Pong");
 
