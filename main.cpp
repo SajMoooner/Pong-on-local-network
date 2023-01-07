@@ -10,7 +10,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <pthread.h>
+
  
  // Konštanty pre hru
 unsigned short PORT = 12345;
@@ -66,13 +66,6 @@ int main() {
   int score1N = 0;
   int score2N = 0;
 
-  // Vytvor vlákno pre pridanie skore hracovi 1
-  pthread_t thread1;
-  pthread_create(&thread1, NULL, addScorePlayer1, &score1N);
-
-  // Vytvor vlákno pre pridanie skore hracovi 2
-  pthread_t thread2;
-  pthread_create(&thread2, NULL, addScorePlayer2, &score2N);
  
   // Vytvor socket pre komunikáciu medzi serverom a klientom a bindni ho na port 
   sf::UdpSocket socket;
