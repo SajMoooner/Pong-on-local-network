@@ -18,7 +18,7 @@ private:
     int HEIGHT;
 public:
     Ball(int startPositionX, int startPositionY, int WIDTH, int HEIGHT);
-    int movee(sf::FloatRect player1Bounds, sf::FloatRect player2Bounds);
+    void move(sf::FloatRect player1Bounds, sf::FloatRect player2Bounds, int* score1N, int* score2N);
     sf::Vector2f getPosition();
     sf::FloatRect getGlobalBounds();
     sf::CircleShape getBall();

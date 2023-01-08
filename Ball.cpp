@@ -15,10 +15,9 @@ Ball::Ball(int startPositionX, int startPositionY,  int WIDTHInput,  int HEIGHTI
     HEIGHT = HEIGHTInput;
 }
 
-int Ball::movee(sf::FloatRect player1Bounds, sf::FloatRect player2Bounds){
+void Ball::move(sf::FloatRect player1Bounds, sf::FloatRect player2Bounds, int* score1N, int* score2N){
 
-    sf::Vector2f ball_velocity(velocityX, velocityY);
-    ball.move(ball_velocity);
+    ball.move(velocityX, velocityY);
     if (ball.getPosition().y < 0 || ball.getPosition().y > HEIGHT - 20) {
         velocityY *= -1;
     }
@@ -36,15 +35,14 @@ int Ball::movee(sf::FloatRect player1Bounds, sf::FloatRect player2Bounds){
     // Zisti či lopta skorovala
     if (ball.getPosition().x < 0) {
         ball.setPosition(WIDTH / 2, HEIGHT / 2);
-        return 1;
+        *score1N += 1;
     }
 
     if (ball.getPosition().x > WIDTH) {
         ball.setPosition(WIDTH / 2, HEIGHT / 2);
-        return 2;
+        *score2N += 1;
     }
 
-    return 0;
 }
 
 sf::Vector2f Ball::getPosition() {

@@ -12,8 +12,10 @@
 class Paddle {
 private:
     sf::RectangleShape player;
+    int WIDTH;
+    int HEIGHT;
 public:
-    Paddle(int startPositionX, int startPositionY);
+    Paddle(int startPositionX, int startPositionY,   int WIDTHInput,  int HEIGHTInput);
     void move(int offsetX, int offsetY);
     sf::Vector2f getPosition();
     sf::FloatRect getGlobalBounds();

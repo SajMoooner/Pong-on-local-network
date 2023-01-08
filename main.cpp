@@ -33,8 +33,8 @@ int main() {
 
   // Vytvor hráčov
 
-  Paddle player1(10, HEIGHT / 2 - 25);
-  Paddle player2(WIDTH - 20, HEIGHT / 2 - 25);
+  Paddle player1(10, HEIGHT / 2 - 25, WIDTH, HEIGHT);
+  Paddle player2(WIDTH - 20, HEIGHT / 2 - 25, WIDTH, HEIGHT);
 
   //sf::RectangleShape player1(sf::Vector2f(10, 50));
   //sf::RectangleShape player2(sf::Vector2f(10, 50));
@@ -136,22 +136,10 @@ int main() {
  
     // Vykresli hráčov a loptu
 
-    if (player1.getPosition().y < 0) {
-      player1.setPosition(10, 0);
-    }
-    if (player1.getPosition().y > HEIGHT - 50) {
-      player1.setPosition(10, HEIGHT - 50);
-    }
-    if (player2.getPosition().y < 0) {
-      player2.setPosition(WIDTH - 20, 0);
-    }
-    if (player2.getPosition().y > HEIGHT - 50) {
-      player2.setPosition(WIDTH - 20, HEIGHT - 50);
-    }
 
     // Updatni pozíciu lopty
 
-    ball.movee(player1.getGlobalBounds(), player2.getGlobalBounds());
+    ball.move(player1.getGlobalBounds(), player2.getGlobalBounds(), &score1N, &score2N);
  
     // Updatni skore
     score1.setString(std::to_string(score1N));
@@ -197,7 +185,6 @@ int main() {
     window.draw(player1.getPlayer());
     window.draw(player2.getPlayer());
     window.draw(ball.getBall());
-
 
     window.display();
   }
