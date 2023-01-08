@@ -11,23 +11,18 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <pthread.h>
+#include "Paddle.h"
+#include "Ball.h"
  
  // Konštanty pre hru
 unsigned short PORT = 12345;
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
-// Funkcia pre pridanie skore hracovi 1 pomocou vlakna
-void *addScorePlayer1(void *arg) {
+// Funkcia pre pridanie skore hracom
+void *addScorePlayer(void *arg) {
   int *score1N = (int *)arg;
   *score1N += 1;
-  return NULL;
-}
-
-// Funkcia pre pridanie skore hracovi 2 pomocou vlakna
-void *addScorePlayer2(void *arg) {
-  int *score2N = (int *)arg;
-  *score2N += 1;
   return NULL;
 }
  
@@ -36,19 +31,25 @@ int main() {
   // Vytvor hlavné okno hry 
   sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Pong");
 
-  // Vytvor hráčov 
-  sf::RectangleShape player1(sf::Vector2f(10, 50));
-  sf::RectangleShape player2(sf::Vector2f(10, 50));
-  player1.setFillColor(sf::Color::White);
-  player2.setFillColor(sf::Color::White);
-  player1.setPosition(10, HEIGHT / 2 - 25);
-  player2.setPosition(WIDTH - 20, HEIGHT / 2 - 25);
+  // Vytvor hráčov
+
+  Paddle player1(10, HEIGHT / 2 - 25);
+  Paddle player2(WIDTH - 20, HEIGHT / 2 - 25);
+
+  //sf::RectangleShape player1(sf::Vector2f(10, 50));
+  //sf::RectangleShape player2(sf::Vector2f(10, 50));
+  //player1.setFillColor(sf::Color::White);
+  //player2.setFillColor(sf::Color::White);
+  //player1.setPosition(10, HEIGHT / 2 - 25);
+  //player2.setPosition(WIDTH - 20, HEIGHT / 2 - 25);
  
   // Vytvor loptu
-  sf::CircleShape ball(10);
+
+  Ball ball(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT);
+  /*sf::CircleShape ball(10);
   ball.setFillColor(sf::Color::White);
   ball.setPosition(WIDTH / 2, HEIGHT / 2);
-  sf::Vector2f ball_velocity(1, 1);
+  sf::Vector2f ball_velocity(1, 1);*/
  
   // Vytvor skore ktoré sa zobrazuje na obrazovke
   sf::Font font;
@@ -68,11 +69,12 @@ int main() {
 
   // Vytvor vlákno pre pridanie skore hracovi 1
   pthread_t thread1;
-  pthread_create(&thread1, NULL, addScorePlayer1, &score1N);
+  pthread_create(&thread1, NULL, addScorePlayer, &score1N);
 
   // Vytvor vlákno pre pridanie skore hracovi 2
   pthread_t thread2;
-  pthread_create(&thread2, NULL, addScorePlayer2, &score2N);
+  pthread_create(&thread2, NULL, addScorePlayer, &score2N);
+
  
   // Vytvor socket pre komunikáciu medzi serverom a klientom a bindni ho na port 
   sf::UdpSocket socket;
@@ -116,10 +118,10 @@ int main() {
     //CLIENT stlačenie kláves UP a DOWN
 
     if (is_server) {
-      if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
         player1.move(0, -1);
       }
-      if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
         player1.move(0, 1);
       }
     } else {
@@ -146,33 +148,10 @@ int main() {
     if (player2.getPosition().y > HEIGHT - 50) {
       player2.setPosition(WIDTH - 20, HEIGHT - 50);
     }
- 
-    // Updatni pozíciu lopty
-    ball.move(ball_velocity);
-    if (ball.getPosition().y < 0 || ball.getPosition().y > HEIGHT - 20) {
-      ball_velocity.y *= -1;
-    }
- 
-    // Zisti či bola lopta dotknutá hráčom 1
-    if (ball.getGlobalBounds().intersects(player1.getGlobalBounds())) {
-      ball_velocity.x *= -1;
-    }
 
-    // Zisti či bola lopta dotknutá hráčom 2
-    if (ball.getGlobalBounds().intersects(player2.getGlobalBounds())) {
-      ball_velocity.x *= -1;
-    }
- 
-    // Zisti či lopta skorovala
-    if (ball.getPosition().x < 0) {
-      ball.setPosition(WIDTH / 2, HEIGHT / 2);
-      score2N++;
-    }
- 
-    if (ball.getPosition().x > WIDTH) {
-      ball.setPosition(WIDTH / 2, HEIGHT / 2);
-      score1N++;
-    }
+    // Updatni pozíciu lopty
+
+    ball.movee(player1.getGlobalBounds(), player2.getGlobalBounds());
  
     // Updatni skore
     score1.setString(std::to_string(score1N));
@@ -215,9 +194,10 @@ int main() {
     window.draw(score1);
     window.draw(score2);
 
-    window.draw(player1);
-    window.draw(player2);
-    window.draw(ball);
+    window.draw(player1.getPlayer());
+    window.draw(player2.getPlayer());
+    window.draw(ball.getBall());
+
 
     window.display();
   }
