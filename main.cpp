@@ -118,10 +118,10 @@ int main() {
     //CLIENT stlačenie kláves UP a DOWN
 
     if (is_server) {
-      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         player1.move(0, -1);
       }
-      if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+      if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
         player1.move(0, 1);
       }
     } else {
